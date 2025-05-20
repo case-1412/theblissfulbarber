@@ -11,7 +11,7 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.WebServlet;
 
 @WebServlet("/viewAppointments")
-public class ViewAppointment extends HttpServlet {
+public class viewAppointment extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -19,69 +19,83 @@ public class ViewAppointment extends HttpServlet {
         response.setContentType("text/html");
         try (PrintWriter out = response.getWriter()) {
             out.println("<html><head><title>Appointments</title>");
+
+            // DataTables and jQuery
+            out.println("<link rel='stylesheet' href='https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css'>");
+            out.println("<script src='https://code.jquery.com/jquery-3.6.0.min.js'></script>");
+            out.println("<script src='https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js'></script>");
+
+            // Styling
             out.println("<style>");
-            out.println("body { font-family: Arial, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0; }");
-            out.println("header { background-color: #333; color: white; padding: 10px 0; text-align: center; font-size: 24px; }");
-            out.println("main { padding: 20px; }");
-            out.println("table { width: 100%; border-collapse: collapse; margin-top: 20px; }");
-            out.println("th, td { padding: 12px; text-align: center; border: 1px solid #ddd; }");
-            out.println("th { background-color: #4CAF50; color: white; }");
-            out.println("tr:nth-child(even) { background-color: #f2f2f2; }");
-            out.println("tr:hover { background-color: #ddd; }");
-            out.println("a { text-decoration: none; color: #007BFF; }");
-            out.println("a:hover { color: #0056b3; }");
-            out.println("button { padding: 10px 20px; background-color: #007BFF; border: none; color: white; font-size: 16px; cursor: pointer; margin: 5px; }");
-            out.println("button:hover { background-color: #0056b3; }");
-            out.println(".buttons-container { display: flex; justify-content: center; margin-top: 20px; }");
+            out.println("body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f8; margin: 0; }");
+            out.println("header { background-color: #2c3e50; color: white; padding: 20px; text-align: center; font-size: 26px; font-weight: bold; }");
+            out.println("main { padding: 30px; max-width: 1200px; margin: auto; }");
+            out.println("h2 { text-align: center; color: #333; margin-bottom: 20px; }");
+            out.println("table { width: 100%; border-collapse: collapse; box-shadow: 0 0 10px rgba(0,0,0,0.1); }");
+            out.println("th, td { padding: 12px 15px; text-align: center; border: 1px solid #ddd; }");
+            out.println("th { background-color: #3498db; color: white; }");
+            out.println("tr:nth-child(even) { background-color: #f9f9f9; }");
+            out.println("tr:hover { background-color: #f1f1f1; }");
+            out.println("a { text-decoration: none; color: #2980b9; font-weight: bold; }");
+            out.println("a:hover { color: #1c5980; }");
+            out.println(".buttons-container { text-align: center; margin-top: 30px; }");
+            out.println("button { background-color: #3498db; color: white; border: none; padding: 10px 20px; font-size: 16px; border-radius: 5px; cursor: pointer; margin: 5px; }");
+            out.println("button:hover { background-color: #2980b9; }");
             out.println("</style>");
+
             out.println("</head><body>");
-            
+
+            // Header
             out.println("<header>Appointment Management</header>");
             out.println("<main>");
-            out.println("<h2>Appointment List</h2>");
-            
-            // Fetch appointments
+            out.println("<h2>All Appointments</h2>");
+
+            // Table
+            out.println("<table id='appointmentTable'>");
+            out.println("<thead><tr>");
+            out.println("<th>ID</th><th>Name</th><th>Phone</th><th>Date</th><th>Time</th>");
+            out.println("<th>Service</th><th>Barber</th><th>Add-ons</th><th>Price (RM)</th><th>Edit</th><th>Delete</th>");
+            out.println("</tr></thead><tbody>");
+
             List<Appointment> list = AppointmentDao.getAllAppointments();
-            
-            out.print("<table>");
-            out.print("<tr>"
-                    + "<th>ID</th><th>Name</th><th>Date</th><th>Time</th>"
-                    + "<th>Service</th><th>Barber</th><th>Add-ons</th><th>Price (RM)</th>"
-                    + "<th>Edit</th><th>Delete</th>"
-                    + "</tr>");
-            
             if (list == null || list.isEmpty()) {
-                out.println("<tr><td colspan='10'>No appointments found.</td></tr>");
+                out.println("<tr><td colspan='11'>No appointments found.</td></tr>");
             } else {
                 for (Appointment a : list) {
-                    out.print("<tr>"
-                            + "<td>" + a.getId() + "</td>"
-                            + "<td>" + a.getName() + "</td>"
-                            + "<td>" + a.getDate() + "</td>"
-                            + "<td>" + a.getTime() + "</td>"
-                            + "<td>" + a.getService() + "</td>"
-                            + "<td>" + a.getBarber() + "</td>"
-                            + "<td>" + a.getAddons() + "</td>"
-                            + "<td>" + a.getPrice() + "</td>"
-                            + "<td><a href='editAppointment.jsp?id=" + a.getId() + "'>Edit</a></td>"
-                            + "<td><a href='DeleteAppointment?id=" + a.getId() + "' onclick=\"return confirm('Are you sure?')\">Delete</a></td>"
-                            + "</tr>");
+                    out.println("<tr>");
+                    out.println("<td>" + a.getId() + "</td>");
+                    out.println("<td>" + a.getName() + "</td>");
+                    out.println("<td>" + a.getPhone() + "</td>");
+                    out.println("<td>" + a.getDate() + "</td>");
+                    out.println("<td>" + a.getTime() + "</td>");
+                    out.println("<td>" + a.getService() + "</td>");
+                    out.println("<td>" + a.getBarber() + "</td>");
+                    out.println("<td>" + a.getAddons() + "</td>");
+                    out.println("<td>" + a.getPrice() + "</td>");
+                    out.println("<td><a href='editAppointment.jsp?id=" + a.getId() + "'>Edit</a></td>");
+                    out.println("<td><a href='DeleteAppointment?id=" + a.getId() + "' onclick=\"return confirm('Are you sure you want to delete this appointment?');\">Delete</a></td>");
+                    out.println("</tr>");
                 }
             }
-            
-            out.print("</table>");
-            
-            // Button container below the table
+
+            out.println("</tbody></table>");
+
+            // Buttons
             out.println("<div class='buttons-container'>");
-            out.println("<form action='index.html' method='get'>");
+            out.println("<form action='index.html' method='get' style='display:inline;'>");
             out.println("<button type='submit'>Back</button>");
             out.println("</form>");
-            
             out.println("<a href='BookAppointment.jsp'><button>Add New Appointment</button></a>");
+            out.println("<a href='provideOffer.jsp'><button>Add New Offer</button></a>");
             out.println("</div>");
-            
+
             out.println("</main>");
-            
+
+            // DataTables Initialization
+            out.println("<script>");
+            out.println("$(document).ready(function() { $('#appointmentTable').DataTable(); });");
+            out.println("</script>");
+
             out.println("</body></html>");
         }
     }
@@ -100,6 +114,6 @@ public class ViewAppointment extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "Displays all appointments in a table format.";
+        return "Displays all appointments in a nice table format with sorting, searching and actions.";
     }
 }
