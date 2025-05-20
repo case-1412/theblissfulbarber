@@ -4,7 +4,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Book Appointment</title>
+    <title>Provide Offer</title>
     <style>
         * {
             box-sizing: border-box;
@@ -99,68 +99,54 @@
         }
     </style>
     
-    <script>
-        function calculatePrice() {
-            const basePrice = 20;
-            const addons = document.querySelectorAll('input[name="addons"]:checked');
-            const addonPrice = addons.length * 5;
-            const total = basePrice + addonPrice;
-            document.getElementById('price').value = total.toFixed(2);
-        }
-    </script>
+    
 </head>
 <body>
 
 <div class="form-container">
-    <h2>Book Appointment</h2>
-    <form action="BookAppointmentServlet" method="post" onsubmit="calculatePrice()">
+    <h2>Provide Offer</h2>
+    
+<form action="SaveOfferServlet" method="post">
+    <label for="offerName">Offer Name:</label>
+    <input type="text" id="offerName" name="offerName" required>
 
-        <label for="name">Your Name</label>
-        <input type="text" name="name" id="name" required>
-        
-        <label for="phone">Phone Number</label>
-<input type="text" name="phone" id="phone" required >
+    <label for="appointmentId">Appointment ID:</label>
+    <input type="text" id="appointmentId" name="appointmentId" required>
 
+    <label for="offerType">Offer Type:</label>
+    <select id="offerType" name="offerType" onchange="toggleOfferDetails()" required>
+        <option value="">Select Type</option>
+        <option value="discount">Discount</option>
+        <option value="addon">Free Add-ons</option>
+    </select>
 
-        <label for="date">Date</label>
-        <input type="date" name="date" id="date" min="<%= LocalDate.now() %>" required>
+    <div id="discountSection" style="display:none;">
+        <label for="discountPercentage">Discount Percentage:</label>
+        <input type="number" id="discountPercentage" name="discountPercentage" min="0" max="100">
+    </div>
 
-        <label for="service">Service</label>
-        <select name="service" id="service" required>
-            <option value="">-- Select a Service --</option>
-            <option value="Haircut">Haircut</option>
-            <option value="Shaving">Shaving</option>
-            <option value="Hair Coloring">Hair Coloring</option>
-            <option value="Beard Trim">Beard Trim</option>
+    <div id="addonSection" style="display:none;">
+        <label for="addons">Choose Add-ons:</label>
+        <select id="addons" name="addons">
+            <option value="free_service">Massage</option>
+            <option value="product_sample">Facial</option>
+            <option value="extended_support">Scalp treatment</option>
         </select>
+    </div>
 
-        <label for="barber">Choose Barber</label>
-        <select name="barber" id="barber" required>
-            <option value="">-- Select a Barber --</option>
-            <option value="John">John</option>
-            <option value="Mike">Mike</option>
-            <option value="Alex">Alex</option>
-        </select>
+    <button type="submit" class="submit-btn">Save Offer</button>
+    <button type="button" onclick="window.location.href='index.html'">Back to Home Page</button>
+</form>
 
-        <label>Add-ons</label>
-        <div class="addons-group">
-            <label><input type="checkbox" name="addons" value="Massage"> Massage</label>
-            <label><input type="checkbox" name="addons" value="Facial"> Facial</label>
-            <label><input type="checkbox" name="addons" value="Scalp Treatment"> Scalp Treatment</label>
-        </div>
+<script>
+function toggleOfferDetails() {
+    var offerType = document.getElementById("offerType").value;
+    document.getElementById("discountSection").style.display = (offerType === "discount") ? "block" : "none";
+    document.getElementById("addonSection").style.display = (offerType === "addon") ? "block" : "none";
+}
+</script>
 
-        <!-- Hidden price field -->
-        <input type="hidden" name="price" id="price">
 
-        <label for="time">Preferred Time</label>
-        <input type="time" name="time" id="time" required>
-
-        <button type="submit" class="submit-btn">Book Appointment</button>
-    </form>
-
-    <form action="index.html" method="get">
-        <button type="submit" class="back-button">Back to Homepage</button>
-    </form>
 </div>
 
 </body>
