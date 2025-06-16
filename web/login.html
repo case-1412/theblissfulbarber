@@ -58,6 +58,7 @@
         <input type="password" id="password" placeholder="Password" required>
         <button type="submit">Login</button>
         <button type="button" class="back-btn" onclick="history.back()">Back</button>
+        
     </form>
 </div>
 
@@ -70,7 +71,7 @@
 
         // Only allow hardcoded manager credentials
         if (username === "admin" && password === "admin123") {
-            window.location.href = "dashboard.html";
+            window.location.href = "viewAppointments";
         } else {
             alert("Invalid credentials. Only manager can log in.");
         }

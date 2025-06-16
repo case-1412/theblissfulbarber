@@ -6,132 +6,162 @@
     <meta charset="UTF-8">
     <title>Book Appointment</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
         body {
+            background-color: #f0f8ff; /* Light blue background */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
         .form-container {
-            background-color: #fff;
-            padding: 40px 35px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 450px;
+            width: 450px;
+            background-color: #1e90ff; /* Dodger blue */
+            margin: 40px auto;
+            padding: 35px 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(30, 144, 255, 0.3);
+            color: white;
         }
         .form-container h2 {
             text-align: center;
-            color: #2c3e50;
             margin-bottom: 25px;
+            font-weight: 600;
+            letter-spacing: 2px;
         }
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 7px;
             font-weight: 600;
-            color: #333;
+            font-size: 16px;
         }
-        input[type="text"],
-        input[type="date"],
-        input[type="time"],
-        select {
+        input[type="text"], input[type="date"], input[type="time"], select {
             width: 100%;
             padding: 10px 12px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 15px;
-            background-color: #f9f9f9;
-            transition: border-color 0.3s;
-        }
-        input:focus, select:focus {
-            border-color: #4285f4;
-            outline: none;
-        }
-        .addons-group {
-            margin-bottom: 20px;
-        }
-        .addons-group label {
-            display: block;
-            margin: 6px 0;
-            font-weight: normal;
-        }
-        .addons-group input[type="checkbox"] {
-            margin-right: 8px;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
+            margin-bottom: 18px;
             border: none;
             border-radius: 8px;
             font-size: 16px;
+            box-sizing: border-box;
+            transition: box-shadow 0.3s ease;
+            color: #333;
+        }
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        input[type="time"]:focus,
+        select:focus {
+            outline: none;
+            box-shadow: 0 0 6px 2px rgba(255, 255, 255, 0.7);
+        }
+        .addons-group {
+            margin-bottom: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .addons-group label {
+            font-weight: 500;
+            font-size: 15px;
+            color: #e0e0e0;
             cursor: pointer;
-            transition: background-color 0.3s;
+        }
+        .addons-group input[type="checkbox"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+        #priceDisplay {
+            background-color: #63a4ff; /* lighter blue */
+            border: none;
+            font-weight: 700;
+            font-size: 18px;
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            color: white;
+            user-select: none;
         }
         .submit-btn {
-            background-color: #4285f4;
-            color: #fff;
-            margin-bottom: 15px;
+            background: #0047ab; /* darker blue */
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            padding: 12px 0;
+            width: 100%;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
         .submit-btn:hover {
-            background-color: #3367d6;
+            background-color: #002e73;
         }
         .back-button {
-            background-color: #999;
-            color: #fff;
+            background-color: transparent;
+            border: 2px solid white;
+            color: white;
+            font-weight: 600;
+            width: 100%;
+            padding: 10px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         .back-button:hover {
-            background-color: #777;
-        }
-
-        /* Responsive for small devices */
-        @media (max-width: 500px) {
-            .form-container {
-                padding: 30px 20px;
-            }
+            background-color: white;
+            color: #1e90ff;
+            border-color: #1e90ff;
         }
     </style>
-    
+
     <script>
         function calculatePrice() {
-            const basePrice = 20;
+            const serviceSelect = document.getElementById('service');
+            const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
+            const basePrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+
             const addons = document.querySelectorAll('input[name="addons"]:checked');
-            const addonPrice = addons.length * 5;
-            const total = basePrice + addonPrice;
+            let addonsPrice = 0;
+            addons.forEach(addon => {
+                addonsPrice += parseFloat(addon.getAttribute('data-price')) || 0;
+            });
+
+            const total = basePrice + addonsPrice;
+
             document.getElementById('price').value = total.toFixed(2);
+            document.getElementById('priceDisplay').value = 'RM ' + total.toFixed(2);
         }
+
+        window.onload = function() {
+            calculatePrice();
+        };
     </script>
 </head>
 <body>
 
 <div class="form-container">
-    <h2>Book Appointment</h2>
+    <h2>Book Your Appointment</h2>
     <form action="BookAppointmentServlet" method="post" onsubmit="calculatePrice()">
 
         <label for="name">Your Name</label>
-        <input type="text" name="name" id="name" required>
-        
+        <input type="text" name="name" id="name" placeholder="Enter your full name" required>
+
         <label for="phone">Phone Number</label>
-<input type="text" name="phone" id="phone" required >
+        <input type="text" name="phone" id="phone" placeholder="7 to 15 digits" required>
 
-
-        <label for="date">Date</label>
+        <label for="date">Select Date</label>
         <input type="date" name="date" id="date" min="<%= LocalDate.now() %>" required>
 
-        <label for="service">Service</label>
-        <select name="service" id="service" required>
-            <option value="">-- Select a Service --</option>
-            <option value="Haircut">Haircut</option>
-            <option value="Shaving">Shaving</option>
-            <option value="Hair Coloring">Hair Coloring</option>
-            <option value="Beard Trim">Beard Trim</option>
+        <label for="time">Preferred Time</label>
+        <input type="time" name="time" id="time" required>
+
+        <label for="service">Choose Service</label>
+        <select name="service" id="service" required onchange="calculatePrice()">
+            <option value="" data-price="0">-- Select a Service --</option>
+            <option value="Haircut" data-price="25">Haircut (RM 25)</option>
+            <option value="Shaving" data-price="15">Shaving (RM 15)</option>
+            <option value="Hair Coloring" data-price="80">Hair Coloring (RM 80)</option>
+            <option value="Beard Trim" data-price="20">Beard Trim (RM 20)</option>
         </select>
 
         <label for="barber">Choose Barber</label>
@@ -144,16 +174,16 @@
 
         <label>Add-ons</label>
         <div class="addons-group">
-            <label><input type="checkbox" name="addons" value="Massage"> Massage</label>
-            <label><input type="checkbox" name="addons" value="Facial"> Facial</label>
-            <label><input type="checkbox" name="addons" value="Scalp Treatment"> Scalp Treatment</label>
+            <label><input type="checkbox" name="addons" value="Massage" data-price="40" onchange="calculatePrice()"> Massage (RM 40)</label>
+            <label><input type="checkbox" name="addons" value="Facial" data-price="50" onchange="calculatePrice()"> Facial (RM 50)</label>
+            <label><input type="checkbox" name="addons" value="Scalp Treatment" data-price="35" onchange="calculatePrice()"> Scalp Treatment (RM 35)</label>
         </div>
 
-        <!-- Hidden price field -->
-        <input type="hidden" name="price" id="price">
+        <label>Total Price</label>
+        <input type="text" id="priceDisplay" readonly>
 
-        <label for="time">Preferred Time</label>
-        <input type="time" name="time" id="time" required>
+        <!-- Hidden price field for form submission -->
+        <input type="hidden" name="price" id="price">
 
         <button type="submit" class="submit-btn">Book Appointment</button>
     </form>

@@ -10,7 +10,7 @@
     <h2 style="text-align:center; margin-top:50px;">Appointment not found.</h2>
 <%
     return;
-    }
+}
 %>
 <!DOCTYPE html>
 <html>
@@ -19,130 +19,189 @@
     <title>Edit Appointment</title>
     <style>
         body {
-            margin: 0;
+            background-color: #f0f8ff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #d4fc79, #96e6a1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            margin: 0; padding: 0;
         }
         .form-container {
-            background-color: #fff;
-            padding: 35px 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 450px;
+            width: 450px;
+            background-color: #1e90ff;
+            margin: 40px auto;
+            padding: 35px 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(30, 144, 255, 0.3);
+            color: white;
         }
         .form-container h2 {
             text-align: center;
-            color: #2c3e50;
             margin-bottom: 25px;
+            font-weight: 600;
+            letter-spacing: 2px;
         }
         label {
             display: block;
-            margin-top: 15px;
-            margin-bottom: 6px;
+            margin-bottom: 7px;
             font-weight: 600;
-            color: #333;
+            font-size: 16px;
         }
-        input[type="text"],
-        input[type="date"],
-        input[type="time"],
-        select {
+        input[type="text"], input[type="date"], input[type="time"], select {
             width: 100%;
             padding: 10px 12px;
-            border: 1px solid #ccc;
+            margin-bottom: 18px;
+            border: none;
             border-radius: 8px;
-            background-color: #f9f9f9;
-            font-size: 15px;
-            margin-bottom: 10px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: box-shadow 0.3s ease;
+            color: #333;
+        }
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        input[type="time"]:focus,
+        select:focus {
+            outline: none;
+            box-shadow: 0 0 6px 2px rgba(255, 255, 255, 0.7);
         }
         .addons-group {
-            margin-top: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
         .addons-group label {
-            display: block;
-            margin: 6px 0;
-            font-weight: normal;
+            font-weight: 500;
+            font-size: 15px;
+            color: #e0e0e0;
+            cursor: pointer;
         }
         .addons-group input[type="checkbox"] {
             margin-right: 8px;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            border: none;
-            border-radius: 8px;
+            transform: scale(1.2);
             cursor: pointer;
-            margin-top: 15px;
+        }
+        #priceDisplay {
+            background-color: #63a4ff;
+            border: none;
+            font-weight: 700;
+            font-size: 18px;
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            color: white;
+            user-select: none;
         }
         .submit-btn {
-            background-color: #27ae60;
-            color: #fff;
+            background: #0047ab;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            padding: 12px 0;
+            width: 100%;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
         .submit-btn:hover {
-            background-color: #219150;
+            background-color: #002e73;
         }
         .back-button {
-            background-color: #bdc3c7;
-            color: #fff;
+            background-color: transparent;
+            border: 2px solid white;
+            color: white;
+            font-weight: 600;
+            width: 100%;
+            padding: 10px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         .back-button:hover {
-            background-color: #95a5a6;
+            background-color: white;
+            color: #1e90ff;
+            border-color: #1e90ff;
         }
     </style>
+
     <script>
         function calculatePrice() {
-            const basePrice = 20;
+            const serviceSelect = document.querySelector('select[name="service"]');
+            const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
+            const basePrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+
             const addons = document.querySelectorAll('input[name="addons"]:checked');
-            const addonPrice = addons.length * 5;
-            const total = basePrice + addonPrice;
+            let addonsPrice = 0;
+            addons.forEach(addon => {
+                addonsPrice += parseFloat(addon.getAttribute('data-price')) || 0;
+            });
+
+            const total = basePrice + addonsPrice;
+
             document.getElementById('price').value = total.toFixed(2);
+            document.getElementById('priceDisplay').value = 'RM ' + total.toFixed(2);
             return true;
         }
+
+        window.onload = function() {
+            calculatePrice();
+        };
     </script>
 </head>
 <body>
 
 <div class="form-container">
     <h2>Edit Appointment</h2>
+
+    <% String error = (String) request.getAttribute("error"); %>
+    <% if (error != null) { %>
+        <div style="background-color: #ff4d4d; color: white; padding: 10px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+            <%= error %>
+        </div>
+    <% } %>
+
     <form action="EditAppointment" method="post" onsubmit="return calculatePrice();">
         <input type="hidden" name="id" value="<%= appointment.getId() %>">
 
         <label for="name">Your Name</label>
-        <input type="text" name="name" value="<%= appointment.getName() %>" required>
+        <input type="text" name="name" id="name" value="<%= appointment.getName() %>" required>
+
+        <label for="phone">Phone Number</label>
+        <input type="text" name="phone" id="phone" value="<%= appointment.getPhone() != null ? appointment.getPhone() : "" %>" required>
 
         <label for="date">Date</label>
-        <input type="date" name="date" value="<%= appointment.getDate() %>" min="<%= LocalDate.now() %>" required>
+        <input type="date" name="date" id="date" value="<%= appointment.getDate() %>" min="<%= LocalDate.now() %>" required>
 
         <label for="time">Time</label>
-        <input type="time" name="time" value="<%= appointment.getTime() %>" required>
+        <input type="time" name="time" id="time" value="<%= appointment.getTime() %>" required>
 
         <label for="service">Service</label>
-        <select name="service" required>
-            <option value="Haircut" <%= appointment.getService().equals("Haircut") ? "selected" : "" %>>Haircut</option>
-            <option value="Shaving" <%= appointment.getService().equals("Shaving") ? "selected" : "" %>>Shaving</option>
-            <option value="Hair Coloring" <%= appointment.getService().equals("Hair Coloring") ? "selected" : "" %>>Hair Coloring</option>
-            <option value="Beard Trim" <%= appointment.getService().equals("Beard Trim") ? "selected" : "" %>>Beard Trim</option>
+        <select name="service" id="service" required onchange="calculatePrice()">
+            <option value="" data-price="0" <%= appointment.getService() == null || appointment.getService().isEmpty() ? "selected" : "" %>>-- Select a Service --</option>
+            <option value="Haircut" data-price="25" <%= "Haircut".equals(appointment.getService()) ? "selected" : "" %>>Haircut (RM 25)</option>
+            <option value="Shaving" data-price="15" <%= "Shaving".equals(appointment.getService()) ? "selected" : "" %>>Shaving (RM 15)</option>
+            <option value="Hair Coloring" data-price="80" <%= "Hair Coloring".equals(appointment.getService()) ? "selected" : "" %>>Hair Coloring (RM 80)</option>
+            <option value="Beard Trim" data-price="20" <%= "Beard Trim".equals(appointment.getService()) ? "selected" : "" %>>Beard Trim (RM 20)</option>
         </select>
 
         <label for="barber">Choose Barber</label>
-        <select name="barber" required>
-            <option value="John" <%= appointment.getBarber().equals("John") ? "selected" : "" %>>John</option>
-            <option value="Mike" <%= appointment.getBarber().equals("Mike") ? "selected" : "" %>>Mike</option>
-            <option value="Alex" <%= appointment.getBarber().equals("Alex") ? "selected" : "" %>>Alex</option>
+        <select name="barber" id="barber" required>
+            <option value="">-- Select a Barber --</option>
+            <option value="John" <%= "John".equals(appointment.getBarber()) ? "selected" : "" %>>John</option>
+            <option value="Mike" <%= "Mike".equals(appointment.getBarber()) ? "selected" : "" %>>Mike</option>
+            <option value="Alex" <%= "Alex".equals(appointment.getBarber()) ? "selected" : "" %>>Alex</option>
         </select>
 
         <label>Add-ons</label>
         <div class="addons-group">
-            <label><input type="checkbox" name="addons" value="Massage" <%= appointment.getAddons().contains("Massage") ? "checked" : "" %>> Massage</label>
-            <label><input type="checkbox" name="addons" value="Facial" <%= appointment.getAddons().contains("Facial") ? "checked" : "" %>> Facial</label>
-            <label><input type="checkbox" name="addons" value="Scalp Treatment" <%= appointment.getAddons().contains("Scalp Treatment") ? "checked" : "" %>> Scalp Treatment</label>
+            <label><input type="checkbox" name="addons" value="Massage" data-price="40" <%= appointment.getAddons().contains("Massage") ? "checked" : "" %> onchange="calculatePrice()"> Massage (RM 40)</label>
+            <label><input type="checkbox" name="addons" value="Facial" data-price="50" <%= appointment.getAddons().contains("Facial") ? "checked" : "" %> onchange="calculatePrice()"> Facial (RM 50)</label>
+            <label><input type="checkbox" name="addons" value="Scalp Treatment" data-price="35" <%= appointment.getAddons().contains("Scalp Treatment") ? "checked" : "" %> onchange="calculatePrice()"> Scalp Treatment (RM 35)</label>
         </div>
+
+        <label>Total Price</label>
+        <input type="text" id="priceDisplay" readonly>
 
         <input type="hidden" name="price" id="price" value="<%= appointment.getPrice() %>">
 

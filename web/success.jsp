@@ -57,7 +57,7 @@
 <div class="confirmation-box">
     <h1>Appointment Booked Successfully!</h1>
     <p>Thank you for your booking. You will receive a confirmation shortly.</p>
-    <a href="viewAppointments" class="view-appointments">View All Appointments</a>
+    <a href="viewCustomer" class="view-appointments">View All Appointments</a>
     <a href="index.html">Back to Home</a>
 </div>
 
